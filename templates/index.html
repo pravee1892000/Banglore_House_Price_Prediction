@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Bangalore House Price Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #0d6efd;
+            --secondary-color: #6c757d;
+            --light-bg: #f8f9fa;
+            --card-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        body {
+            padding: 0;
+            background-color: var(--light-bg);
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+        
+        .main-container {
+            padding: 15px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .page-title {
+            margin-bottom: 1.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .prediction-container {
+            margin: 20px auto;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #e9ecef;
+            display: none;
+            max-width: 600px;
+            box-shadow: var(--card-shadow);
+            transition: all 0.3s ease;
+        }
+        
+        .prediction-container.show {
+            animation: fadeIn 0.5s;
+        }
+        
+        .card {
+            margin-bottom: 25px;
+            border-radius: 8px;
+            box-shadow: var(--card-shadow);
+            border: none;
+        }
+        
+        .card-header {
+            background-color: var(--secondary-color);
+            color: white;
+            border-radius: 8px 8px 0 0 !important;
+            padding: 15px 20px;
+        }
+        
+        .card-header h3 {
+            margin: 0;
+            font-size: 1.5rem;
+        }
+        
+        .card-body {
+            padding: 25px;
+        }
+        
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-control, .form-select {
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ced4da;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        }
+        
+        .btn-primary {
+            padding: 10px 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+        }
+        
+        footer {
+            background-color: #212529;
+            color: white;
+            text-align: center;
+            padding: 15px 0;
+            margin-top: 30px;
+            width: 100%;
+        }
+        
+        .price-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .row {
+                margin-left: -8px;
+                margin-right: -8px;
+            }
+            .col-md-3, .col-md-4, .col-md-6 {
+                padding-left: 8px;
+                padding-right: 8px;
+            }
+            .card-body {
+                padding: 15px;
+            }
+            .page-title {
+                font-size: 1.8rem;
+            }
+            .card-header h3 {
+                font-size: 1.3rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .page-title {
+                font-size: 1.5rem;
+            }
+            .price-value {
+                font-size: 2rem;
+            }
+            .btn-primary {
+                width: 100%;
+            }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Accessibility improvements */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+        
+        /* Loading indicator */
+        .loader {
+            display: none;
+            margin: 20px auto;
+            text-align: center;
+        }
+        
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-left-color: var(--primary-color);
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <h1 class="text-center page-title">Bangalore House Price Prediction</h1>
+        
+        <div class="card">
+            <div class="card-header">
+                <h3>Enter Property Details</h3>
+            </div>
+            <div class="card-body">
+                <form id="predictionForm" novalidate>
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="location" class="form-label">Location <span class="text-danger">*</span></label>
+                            <select class="form-select" id="location" required aria-describedby="locationHelp">
+                                <option value="">Select Location</option>
+                                <option value="BTM Layout">BTM Layout</option>
+                                <option value="Bannerghatta Road">Bannerghatta Road</option>
+                                <option value="Basavanagudi">Basavanagudi</option>
+                                <option value="Bellandur">Bellandur</option>
+                                <option value="Electronic City">Electronic City</option>
+                                <option value="HSR Layout">HSR Layout</option>
+                                <option value="Hebbal">Hebbal</option>
+                                <option value="Indiranagar">Indiranagar</option>
+                                <option value="JP Nagar">JP Nagar</option>
+                                <option value="Jayanagar">Jayanagar</option>
+                                <option value="Kengeri">Kengeri</option>
+                                <option value="Koramangala">Koramangala</option>
+                                <option value="Malleshwaram">Malleshwaram</option>
+                                <option value="Malleswaram">Malleswaram</option>
+                                <option value="Marathahalli">Marathahalli</option>
+                                <option value="Rajajinagar">Rajajinagar</option>
+                                <option value="Sarjapur Road">Sarjapur Road</option>
+                                <option value="Ulsoor">Ulsoor</option>
+                                <option value="Whitefield">Whitefield</option>
+                                <option value="Yelahanka">Yelahanka</option>
+                            </select>
+                            <div id="locationHelp" class="form-text">Select the area where property is located</div>
+                            <div class="invalid-feedback">Please select a location</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="area" class="form-label">Area (sqft) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="area" required min="100" placeholder="e.g. 1200">
+                            <div class="invalid-feedback">Please enter a valid area (min 100 sqft)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-sm-6 col-md-3 mb-3">
+                            <label for="bedrooms" class="form-label">Bedrooms <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="bedrooms" required min="1" max="10" placeholder="e.g. 2">
+                            <div class="invalid-feedback">Please enter number of bedrooms (1-10)</div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 mb-3">
+                            <label for="bathrooms" class="form-label">Bathrooms <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="bathrooms" required min="1" max="10" placeholder="e.g. 2">
+                            <div class="invalid-feedback">Please enter number of bathrooms (1-10)</div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 mb-3">
+                            <label for="parkingSpaces" class="form-label">Parking Spaces <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="parkingSpaces" required min="0" max="5" placeholder="e.g. 1">
+                            <div class="invalid-feedback">Please enter number of parking spaces (0-5)</div>
+                        </div>
+                        <div class="col-sm-6 col-md-3 mb-3">
+                            <label for="age" class="form-label">Age of Property (years) <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="age" required min="0" max="100" placeholder="e.g. 5">
+                            <div class="invalid-feedback">Please enter property age (0-100 years)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-6 mb-3">
+                            <label for="floor" class="form-label">Floor <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="floor" required min="0" max="50" placeholder="e.g. 3">
+                            <div class="invalid-feedback">Please enter a valid floor number (0-50)</div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="totalFloors" class="form-label">Total Floors <span class="text-danger">*</span></label>
+                            <input type="number" class="form-control" id="totalFloors" required min="1" max="50" placeholder="e.g. 10">
+                            <div class="invalid-feedback">Please enter total number of floors (1-50)</div>
+                        </div>
+                    </div>
+                    
+                    <div class="row g-3">
+                        <div class="col-md-4 mb-3">
+                            <label for="furnishing" class="form-label">Furnishing <span class="text-danger">*</span></label>
+                            <select class="form-select" id="furnishing" required>
+                                <option value="">Select Option</option>
+                                <option value="Fully-Furnished">Fully-Furnished</option>
+                                <option value="Semi-Furnished">Semi-Furnished</option>
+                                <option value="Unfurnished">Unfurnished</option>
+                            </select>
+                            <div class="invalid-feedback">Please select furnishing status</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="propertyType" class="form-label">Property Type <span class="text-danger">*</span></label>
+                            <select class="form-select" id="propertyType" required>
+                                <option value="">Select Type</option>
+                                <option value="Apartment">Apartment</option>
+                                <option value="Independent House">Independent House</option>
+                            </select>
+                            <div class="invalid-feedback">Please select property type</div>
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label for="nearbyMetro" class="form-label">Nearby Metro <span class="text-danger">*</span></label>
+                            <select class="form-select" id="nearbyMetro" required>
+                                <option value="">Select Option</option>
+                                <option value="Y">Yes</option>
+                                <option value="N">No</option>
+                            </select>
+                            <div class="invalid-feedback">Please select if metro is nearby</div>
+                        </div>
+                    </div>
+                    
+                    <div class="text-center mt-4">
+                        <button type="submit" class="btn btn-primary btn-lg">Predict Price</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="loader" id="loader">
+            <div class="spinner"></div>
+            <p class="mt-2">Calculating price estimate...</p>
+        </div>
+        
+        <div class="prediction-container" id="predictionResult">
+            <h3 class="text-center mb-3">Estimated House Price</h3>
+            <h2 class="text-center"><span class="price-value" id="predictedPrice">0</span> Lakhs</h2>
+            <p class="text-center text-muted">(1 Lakh = 100,000 Indian Rupees)</p>
+            <div class="text-center mt-4">
+                <button type="button" class="btn btn-secondary" id="resetForm">Make New Prediction</button>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p class="mb-0">© 2025 Bangalore House Price Predictor | Developed by Praveen B S</p>
+        </div>
+    </footer>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('predictionForm');
+            const loader = document.getElementById('loader');
+            const resultContainer = document.getElementById('predictionResult');
+            const resetButton = document.getElementById('resetForm');
+            
+            // Form validation function
+            function validateForm() {
+                let isValid = true;
+                const inputs = form.querySelectorAll('input, select');
+                
+                inputs.forEach(input => {
+                    if (input.hasAttribute('required') && !input.value.trim()) {
+                        input.classList.add('is-invalid');
+                        isValid = false;
+                    } else if (input.type === 'number') {
+                        const min = input.hasAttribute('min') ? parseInt(input.getAttribute('min')) : null;
+                        const max = input.hasAttribute('max') ? parseInt(input.getAttribute('max')) : null;
+                        const value = parseInt(input.value);
+                        
+                        if ((min !== null && value < min) || (max !== null && value > max)) {
+                            input.classList.add('is-invalid');
+                            isValid = false;
+                        } else {
+                            input.classList.remove('is-invalid');
+                        }
+                    } else {
+                        input.classList.remove('is-invalid');
+                    }
+                });
+                
+                return isValid;
+            }
+            
+            // Input validation event listeners
+            const inputs = form.querySelectorAll('input, select');
+            inputs.forEach(input => {
+                input.addEventListener('change', function() {
+                    if (this.value.trim()) {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            });
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                if (!validateForm()) {
+                    // Scroll to the first invalid input
+                    const firstInvalid = form.querySelector('.is-invalid');
+                    if (firstInvalid) {
+                        firstInvalid.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                    return;
+                }
+                
+                const requestData = {
+                    Location: document.getElementById('location').value,
+                    Area: parseInt(document.getElementById('area').value),
+                    Bedrooms: parseInt(document.getElementById('bedrooms').value),
+                    Bathrooms: parseInt(document.getElementById('bathrooms').value),
+                    ParkingSpaces: parseInt(document.getElementById('parkingSpaces').value),
+                    Age: parseInt(document.getElementById('age').value),
+                    Floor: parseInt(document.getElementById('floor').value),
+                    TotalFloors: parseInt(document.getElementById('totalFloors').value),
+                    Furnishing: document.getElementById('furnishing').value,
+                    PropertyType: document.getElementById('propertyType').value,
+                    NearbyMetro: document.getElementById('nearbyMetro').value
+                };
+                
+                // Show loader
+                loader.style.display = 'block';
+                
+                // Simulate API call (replace with actual fetch when backend is ready)
+                setTimeout(() => {
+                    fetch('/predict', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(requestData),
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        loader.style.display = 'none';
+                        
+                        if (data.error) {
+                            showError(data.error);
+                        } else {
+                            document.getElementById('predictedPrice').textContent = data.prediction;
+                            resultContainer.style.display = 'block';
+                            resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        }
+                    })
+                    .catch(error => {
+                        loader.style.display = 'none';
+                        showError('An error occurred while making the prediction. Please try again later.');
+                        console.error('Error:', error);
+                    });
+                }, 1000);
+                
+                // Fallback for demo/development - comment out when backend is ready
+                /*
+                loader.style.display = 'none';
+                const mockPrice = (Math.random() * 100 + 50).toFixed(2);
+                document.getElementById('predictedPrice').textContent = mockPrice;
+                resultContainer.style.display = 'block';
+                resultContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                */
+            });
+            
+            // Reset form button
+            resetButton.addEventListener('click', function() {
+                form.reset();
+                resultContainer.style.display = 'none';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+            
+            // Error notification function
+            function showError(message) {
+                const errorAlert = document.createElement('div');
+                errorAlert.className = 'alert alert-danger alert-dismissible fade show mt-3';
+                errorAlert.role = 'alert';
+                errorAlert.innerHTML = `
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                `;
+                
+                form.parentNode.insertBefore(errorAlert, form.nextSibling);
+                
+                // Auto-dismiss after 5 seconds
+                setTimeout(() => {
+                    errorAlert.classList.remove('show');
+                    setTimeout(() => errorAlert.remove(), 300);
+                }, 5000);
+            }
+            
+            // Handle floor validation (floor should be <= totalFloors)
+            const floorInput = document.getElementById('floor');
+            const totalFloorsInput = document.getElementById('totalFloors');
+            
+            function validateFloors() {
+                if (floorInput.value && totalFloorsInput.value) {
+                    const floor = parseInt(floorInput.value);
+                    const totalFloors = parseInt(totalFloorsInput.value);
+                    
+                    if (floor > totalFloors) {
+                        floorInput.classList.add('is-invalid');
+                        floorInput.nextElementSibling.textContent = 'Floor cannot be greater than total floors';
+                        return false;
+                    }
+                }
+                return true;
+            }
+            
+            floorInput.addEventListener('change', validateFloors);
+            totalFloorsInput.addEventListener('change', validateFloors);
+            
+            // Enable Bootstrap tooltips if Bootstrap JS is included
+            if (typeof bootstrap !== 'undefined' && bootstrap.Tooltip) {
+                const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                tooltipTriggerList.map(function (tooltipTriggerEl) {
+                    return new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+            }
+        });
+    </script>
+    
+    <!-- Include Bootstrap JS for better component functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
