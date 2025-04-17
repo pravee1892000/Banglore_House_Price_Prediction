@@ -16,7 +16,7 @@ This is a web application that predicts the price of a house in Bangalore based 
 
 ## 🚀 Demo
 
-![Live Site](screenshot.png) <!-- Add a real screenshot if available -->
+![Live Site](https://banglore-house-price-prediction-fkms.onrender.com/) <!-- Add a real screenshot if available -->
 
 ---
 
