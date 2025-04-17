@@ -14,12 +14,6 @@ This is a web application that predicts the price of a house in Bangalore based 
 
 ---
 
-## 🚀 Demo
-
-![Live Site](https://banglore-house-price-prediction-fkms.onrender.com/) <!-- Add a real screenshot if available -->
-
----
-
 ## 🧠 Machine Learning Model
 
 The model is trained on real housing data from Bangalore with features like:
@@ -37,9 +31,10 @@ The model is trained on real housing data from Bangalore with features like:
 
 ## 🛠️ Tech Stack
 
-| Frontend | Backend | ML |
+| Frontend | Backend | ML | Deployment|
 |----------|---------|----|
-| HTML5, CSS3, JS, Bootstrap | Flask (or FastAPI) | Scikit-learn, Pandas, NumPy |
+| HTML5, CSS3, JS, Bootstrap | Flask (or FastAPI) | Scikit-learn, Pandas, NumPy ,Standard Sclaing,Lasso Regression| Render ( https://banglore-house-price-prediction-fkms.onrender.com/ )
+
 
 ---
 
