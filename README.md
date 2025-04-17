@@ -16,7 +16,7 @@ This is a web application that predicts the price of a house in Bangalore based 
 
 ## 🚀 Demo
 
-![App Screenshot](screenshot.png) <!-- Add a real screenshot if available -->
+![Live Site](screenshot.png) <!-- Add a real screenshot if available -->
 
 ---
 
@@ -47,7 +47,9 @@ The model is trained on real housing data from Bangalore with features like:
 
 ```bash
 .
-├── static/
+├── notebooks/
+│   ├── data_analysis.ipynb
+│   ├── model_training.ipynb
 ├── templates/
 │   └── index.html
 ├── model/
