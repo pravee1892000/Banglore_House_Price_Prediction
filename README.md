@@ -33,7 +33,7 @@ The model is trained on real housing data from Bangalore with features like:
 
 | **Frontend** | **Backend** | **Machine Learning** | **Deployment** |
 |--------------|-------------|----------------------|----------------|
-| HTML5, CSS3, JS, Bootstrap | Flask (or FastAPI) | Scikit-learn, Pandas, NumPy, Standard Scaling, Lasso Regression | [https://banglore-house-price-prediction-fkms.onrender.com/](https://banglore-house-price-prediction-fkms.onrender.com/) |
+| HTML5, CSS3, JS, Bootstrap | Flask (or FastAPI) | Scikit-learn, Pandas, NumPy, Standard Scaling, Lasso Regression | Render [Live Site](https://banglore-house-price-prediction-fkms.onrender.com/) |
 
 ---
 
